@@ -1,18 +1,31 @@
-import React from "react";
+import { useEffect, useState, useContext } from "react";
 import Card from "../Components/Card";
-
-//Este componente debera ser estilado como "dark" o "light" dependiendo del theme del Context
+import { ContextGlobal } from '../Components/utils/global.context';
 
 const Favs = () => {
+  const [favs, setFavs] = useState([]);
+  const { state } = useContext(ContextGlobal);
+
+  useEffect(() => {
+    const storedFavs = JSON.parse(localStorage.getItem('favs')) || [];
+    setFavs(storedFavs);
+  }, []);
+
+  const clearFavs = () => {
+    localStorage.removeItem('favs');
+    setFavs([]);
+  };
 
   return (
-    <>
+    <div className={state.theme}>
       <h1>Dentists Favs</h1>
+      <button onClick={clearFavs}>Clear all favs</button>
       <div className="card-grid">
-        {/* este componente debe consumir los destacados del localStorage */}
-        {/* Deberan renderizar una Card por cada uno de ellos */}
+        {favs.map(fav => (
+          <Card key={fav.id} name={fav.name} username={fav.username} id={fav.id} />
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
